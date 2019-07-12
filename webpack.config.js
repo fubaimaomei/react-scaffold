@@ -35,7 +35,7 @@ module.exports = {
             },
             {   //  处理 antd
                 test: /\.(less|css)$/,
-                exclude: /src|components/,
+                include: /node_modules/,
                 use: extractAntdCss.extract({
                     fallback: 'style-loader',
                     use: ['css-loader','postcss-loader', 'less-loader']
