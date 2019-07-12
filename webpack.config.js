@@ -2,6 +2,9 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const extractAntdCss = new ExtractTextPlugin('antd.css');
+const extractBaseCass = new ExtractTextPlugin('base.css');
+
 
 module.exports = {
     entry: {
@@ -19,7 +22,7 @@ module.exports = {
             {
                 test: /\.(less|css)$/,
                 exclude: /node_modules/,
-                use: ExtractTextPlugin.extract({
+                use: extractBaseCass.extract({
                     fallback: 'style-loader',
                     use: [{
                         loader: 'css-loader',
@@ -33,7 +36,7 @@ module.exports = {
             {   //  处理 antd
                 test: /\.(less|css)$/,
                 exclude: /src|components/,
-                use: ExtractTextPlugin.extract({
+                use: extractAntdCss.extract({
                     fallback: 'style-loader',
                     use: ['css-loader','postcss-loader', 'less-loader']
                 })
@@ -45,7 +48,8 @@ module.exports = {
         ]
     },
     plugins: [
-        new ExtractTextPlugin('style.css'),
+        extractAntdCss,
+        extractBaseCass,
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             title: '领略数据支付',
