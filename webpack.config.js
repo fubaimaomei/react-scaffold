@@ -2,9 +2,8 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const extractAntdCss = new ExtractTextPlugin('antd.css');
-const extractBaseCass = new ExtractTextPlugin('base.css');
-
+const extractBaseCss = new ExtractTextPlugin('base.css');
+const extractModuleCss = new ExtractTextPlugin('module.css');
 
 module.exports = {
     entry: {
@@ -19,10 +18,18 @@ module.exports = {
                 exclude: /node_modules/,
                 use: ['babel-loader']
             },
-            {
+            {   //  提取 antd 样式
+                test: /\.(less|css)$/i,
+                include: /node_modules/,
+                use: extractBaseCss.extract({
+                    fallback: 'style-loader',
+                    use: ['css-loader','postcss-loader', 'less-loader']
+                })
+            },
+            {   // 提取css模块 以及 公共样式
                 test: /\.(less|css)$/,
                 exclude: /node_modules/,
-                use: extractBaseCass.extract({
+                use: extractModuleCss.extract({
                     fallback: 'style-loader',
                     use: [{
                         loader: 'css-loader',
@@ -33,14 +40,6 @@ module.exports = {
                     }, 'postcss-loader', 'less-loader']
                 })
             },
-            {   //  处理 antd
-                test: /\.(less|css)$/,
-                include: /node_modules/,
-                use: extractAntdCss.extract({
-                    fallback: 'style-loader',
-                    use: ['css-loader','postcss-loader', 'less-loader']
-                })
-            },
             {
                 test: /\.(png|svg|jpg|gif)$/,
                 use: ['file-loader']
@@ -48,8 +47,8 @@ module.exports = {
         ]
     },
     plugins: [
-        extractAntdCss,
-        extractBaseCass,
+        extractModuleCss,
+        extractBaseCss,
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             title: '领略数据支付',
