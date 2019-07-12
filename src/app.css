@@ -1,0 +1,4 @@
+/* 全局css */
+:global(.container) {
+    padding: 0 20px;
+}
