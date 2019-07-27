@@ -2,15 +2,14 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const extractBaseCss = new ExtractTextPlugin('base.css');
-const extractModuleCss = new ExtractTextPlugin('module.css');
+const extractBaseCss = new ExtractTextPlugin('css/base.css');
+const extractModuleCss = new ExtractTextPlugin('css/module.css');
 
 module.exports = {
     entry: {
         app: './src/index.js'
     },
-    mode: 'development',
-    devtool: 'inline-source-map',
+    
     module: {
         rules: [
             {
@@ -37,12 +36,19 @@ module.exports = {
                             modules: true,
                             sourceMap: true
                         },
-                    }, 'postcss-loader', 'less-loader']
+                    }, 'postcss-loader', 'less-loader'
+                ]
                 })
             },
             {
                 test: /\.(png|svg|jpg|gif)$/,
-                use: ['file-loader']
+                use: [{
+                    loader: 'file-loader',
+                    options: {
+                        name: '[name]_[hash].[ext]',
+                        outputPath: 'images/'
+                    }
+                }]
             }
         ]
     },
@@ -68,11 +74,9 @@ module.exports = {
         }
     },
     output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: '[name].bundle.js',
+        path: path.resolve(__dirname, 'dist/'),
+        filename: '[name].[chunkhash].js',
+        chunkFilename: '[name].[chunkhash].js', //非入口 chunk 
         publicPath: '/'
-    },
-    devServer: {
-        contentBase: './dist'
     }
 };
